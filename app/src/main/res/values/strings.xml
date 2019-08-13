@@ -4,5 +4,5 @@
 
     <!-- API Keys -->
     <string name="open_weather_api">fe04a6e4de6f7a1bdf2261c62fc2cf77</string>
-    <string name="title_activity_cities">CitiesActivity</string>
+    <string name="title_activity_cities">Cities</string>
 </resources>

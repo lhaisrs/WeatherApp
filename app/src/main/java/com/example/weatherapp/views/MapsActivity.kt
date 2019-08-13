@@ -1,4 +1,4 @@
-package com.example.weatherapp
+package com.example.weatherapp.views
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -7,8 +7,8 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
-import android.util.Log
 import android.widget.Button
+import com.example.weatherapp.R
 import com.example.weatherapp.models.Coordinate
 
 import com.google.android.gms.location.FusedLocationProviderClient

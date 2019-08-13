@@ -16,9 +16,12 @@ Weather App using Kotlin to Android
 - Using doAsync to make a request API call
 - Using JSON library to convert response from API to JSON
 - Getting information from API
-- Creating City, Coordinate and Weather class
+- Creating *City, Coordinate and Weather* class
 - Updating to get always just one pine
 - Creating cities list to get top 15 cities
+- Created **CityAdapter** using ViewHolder
+- Created **RecycleView** to CitiesList
+- Displaying all cities as Recycle View
 
 ###### Improvements:
 - [x] Create User Coordination class
