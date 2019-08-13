@@ -33,7 +33,9 @@ class CitiesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cities)
+
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         //Get Extra InformatioN
         intent.extras.get(USER_LAT).let { value -> userLocation.lat = value as Double }

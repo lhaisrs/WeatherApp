@@ -20,7 +20,9 @@
         <activity
                 android:name=".views.CitiesActivity"
                 android:label="@string/title_activity_cities"
-                android:theme="@style/AppTheme.NoActionBar">
+                android:theme="@style/AppTheme.NoActionBar"
+                android:parentActivityName=".views.MapsActivity"
+        >
         </activity>
 
         <uses-library
@@ -36,7 +38,6 @@
                 android:label="@string/title_activity_maps">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>

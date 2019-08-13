@@ -24,6 +24,7 @@ Weather App using Kotlin to Android
 - Displaying all cities as Recycle View
 - Adding progress bar
 - Changing MapActivity name
+- Enable back button action
 
 ###### Improvements:
 - [x] Create User Coordination class
