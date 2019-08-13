@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">Weather App</string>
-    <string name="title_activity_maps">Map</string>
-
-    <!-- API Keys -->
-    <string name="open_weather_api">fe04a6e4de6f7a1bdf2261c62fc2cf77</string>
+    <string name="title_activity_maps">Click on Map</string>
     <string name="title_activity_cities">Cities</string>
 </resources>

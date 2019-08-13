@@ -22,6 +22,8 @@ Weather App using Kotlin to Android
 - Created **CityAdapter** using ViewHolder
 - Created **RecycleView** to CitiesList
 - Displaying all cities as Recycle View
+- Adding progress bar
+- Changing MapActivity name
 
 ###### Improvements:
 - [x] Create User Coordination class

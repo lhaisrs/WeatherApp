@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.View
+import android.widget.ProgressBar
 import com.example.weatherapp.R
 import com.example.weatherapp.adapters.CityAdapter
 
@@ -24,6 +26,7 @@ class CitiesActivity : AppCompatActivity() {
 
     private var userLocation : Coordinate = Coordinate(0.0, 0.0)
     private lateinit var citiesRecycleView: RecyclerView
+    private lateinit var progressBar : ProgressBar
 
     var citiesList : MutableList<City> = mutableListOf()
 
@@ -36,18 +39,26 @@ class CitiesActivity : AppCompatActivity() {
         intent.extras.get(USER_LAT).let { value -> userLocation.lat = value as Double }
         intent.extras.get(USER_LNG).let { value -> userLocation.lng = value as Double }
 
+        progressBar = findViewById(R.id.progressBarCities)
         citiesRecycleView = findViewById(R.id.recycleViewCities)
 
         citiesRecycleView.apply {
             val layoutManager = LinearLayoutManager(this@CitiesActivity)
             citiesRecycleView.layoutManager = layoutManager
         }
+    }
 
+    override fun onStart() {
+        super.onStart()
+
+        progressBar.visibility = View.VISIBLE
         searchCities()
+
     }
 
     private fun searchCities(){
         val API_URL = "https://api.openweathermap.org/data/2.5/find?lat=${userLocation.lat}&lon=${userLocation.lng}&cnt=15&APPID=fe04a6e4de6f7a1bdf2261c62fc2cf77"
+
 
         doAsync {
             val response = URL(API_URL).readText()
@@ -82,6 +93,7 @@ class CitiesActivity : AppCompatActivity() {
             uiThread {
 
                 recycleViewCities.adapter = CityAdapter(citiesList, it)
+                progressBar.visibility = View.GONE
 
             }
         }
