@@ -4,9 +4,11 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
 import android.util.Log
+import android.widget.Button
 
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -16,6 +18,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.android.synthetic.main.activity_maps.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -29,6 +32,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     var lat: Double = 0.0
     var lng: Double = 0.0
 
+    var posLat: Double = 0.0
+    var posLng: Double = 0.0
+
     //Debug Tags
     private var DEBUG_LOCATION_TAG = "User Location"
 
@@ -41,6 +47,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         //Check Location Permission
         checkUserLocationPermission()
+
+        val btnSearch = findViewById(R.id.searchBtn) as Button
+        btnSearch.setOnClickListener {
+            navigateSearchPage(posLat, posLng)
+        }
 
     }
 
@@ -72,8 +83,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12.0f))
 
         mMap.setOnMapClickListener {
-            //TODO: Create navigation variables to search near Cities from the user
             mMap.addMarker(MarkerOptions().position(it))
+            posLat = it.latitude
+            posLng = it.longitude
         }
     }
 
@@ -89,7 +101,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun navigateSearchPage(){
+    private fun navigateSearchPage(lat: Double, lng: Double){
+        //Setup Intent to Navigate passing User Location
+        val citiesIntent = Intent(this, CitiesActivity::class.java)
+        citiesIntent.putExtra(USER_LAT, lat)
+        citiesIntent.putExtra(USER_LNG, lng)
+        //Start CitiesActivity
+        startActivity(citiesIntent)
+    }
 
+    companion object {
+        val USER_LAT = "User_Latitude"
+        val USER_LNG = "User_Longitude"
     }
 }
