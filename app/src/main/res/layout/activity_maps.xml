@@ -16,6 +16,7 @@
                   android:background="@color/colorPrimary"
                   android:textColor="@color/colorWhite"
                   android:layout_marginBottom="20dp"
+                  android:id="@+id/searchBtn"
           />
 
 </fragment>
