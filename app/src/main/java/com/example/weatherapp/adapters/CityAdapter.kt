@@ -1,6 +1,7 @@
 package com.example.weatherapp.adapters
 
 import android.content.Context
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 
 import com.example.weatherapp.R
 import com.example.weatherapp.models.City
+import com.example.weatherapp.views.DetailsCityActivity
 
 import kotlinx.android.synthetic.main.item_city_list.view.*
 
@@ -32,7 +34,19 @@ class CityAdapter (
 
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bindView(item: City) = with(itemView) {
+            //Using just name as field to RecyclerView
             cityName.text = item.name
+
+            cityName.setOnClickListener {
+                //Navigate to DetailsCityActivity
+                val intent = Intent(context, DetailsCityActivity::class.java)
+                intent.putExtra(CITY, item)
+                context.startActivity(intent)
+            }
         }
+    }
+
+    companion object {
+        val CITY = "Selected_City"
     }
 }

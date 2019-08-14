@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.Manifest
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
 import android.widget.Button
+import android.widget.Toast
+
 import com.example.weatherapp.R
 import com.example.weatherapp.models.Coordinate
-
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -19,6 +21,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.gson.Gson
+
+import org.jetbrains.anko.defaultSharedPreferences
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -26,15 +31,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
+    //Shared Preferences
+    private lateinit var preferences: SharedPreferences
+
     //Location Permission
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 101
 
     //User Location
     private lateinit var userLocation : Coordinate
     private lateinit var posLocation : Coordinate
-
-    //Debug Tags
-    private var DEBUG_LOCATION_TAG = "User Location"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,13 +49,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         userLocation = Coordinate(0.0, 0.0)
         posLocation = Coordinate(0.0, 0.0)
 
+        //Initialize SharedPreference
+        preferences = defaultSharedPreferences
+
         //Initialize FusedLocationProvider
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         //Check Location Permission
         checkUserLocationPermission()
 
-        val btnSearch = findViewById(R.id.searchBtn) as Button
+        val btnSearch = findViewById<Button>(R.id.searchBtn)
         btnSearch.setOnClickListener {
             navigateSearchPage()
         }
@@ -98,21 +106,38 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION)
 
         } else {
+            //Permission has already been GRANTED
             setupUserLocation()
         }
     }
 
     private fun navigateSearchPage(){
-        //Setup Intent to Navigate passing User Location
-        val citiesIntent = Intent(this, CitiesActivity::class.java)
-        citiesIntent.putExtra(USER_LAT, posLocation.lat)
-        citiesIntent.putExtra(USER_LNG, posLocation.lng)
-        //Start CitiesActivity
-        startActivity(citiesIntent)
+
+        if(posLocation.lat == 0.0 && posLocation.lng == 0.0) {
+            //Force user to select a position on Map
+            val toast : Toast = Toast.makeText(this, "Please, click on map to select a position", Toast.LENGTH_SHORT)
+            toast.show()
+        } else {
+            //Using SharedPreference as safe storage and by-pass to CitiesActivity
+            saveSharedPreference()
+
+            //Setup Intent to Navigate passing User Location
+            val citiesIntent = Intent(this, CitiesActivity::class.java)
+            //Start CitiesActivity
+            startActivity(citiesIntent)
+        }
+    }
+
+    private fun saveSharedPreference() {
+        val gson = Gson() //Initialize Gson (convert to JSON)
+        val editor : SharedPreferences.Editor = preferences.edit()
+        editor.clear() //Clean all cache from SharedPrefence
+
+        val statusLocation = gson.toJson(posLocation) as String
+        editor.putString(PREFERENCES, statusLocation).apply()
     }
 
     companion object {
-        val USER_LAT = "User_Latitude"
-        val USER_LNG = "User_Longitude"
+        val PREFERENCES = "User_Position"
     }
 }

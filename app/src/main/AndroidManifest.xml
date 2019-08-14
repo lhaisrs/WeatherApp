@@ -18,11 +18,16 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
+                android:name=".views.DetailsCityActivity"
+                android:label="@string/title_activity_details_city"
+                android:parentActivityName=".views.CitiesActivity"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
                 android:name=".views.CitiesActivity"
                 android:label="@string/title_activity_cities"
-                android:theme="@style/AppTheme.NoActionBar"
                 android:parentActivityName=".views.MapsActivity"
-        >
+                android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <uses-library
@@ -35,9 +40,10 @@
 
         <activity
                 android:name=".views.MapsActivity"
-                android:label="@string/title_activity_maps">
+                android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>

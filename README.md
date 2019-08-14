@@ -25,9 +25,16 @@ Weather App using Kotlin to Android
 - Adding progress bar
 - Changing MapActivity name
 - Enable back button action
+- Include **gson** and **Picasso** libraries
+- Adding DetailsCityActivity
+- Setup to navigate to DetailsCityActitivty from CitiesActivity select a RecycleView item
+- Enable *City and Weather* as Serializable to passing in extras intent
+- Using SharedPreference as safety storage and by-pass variable
+- Put a toast to force user to always click on Map before go to CitiesActivity
 
 ###### Improvements:
 - [x] Create User Coordination class
 - [x] Get user location (coordinates) after add marker
 - [x] Create safe getExtra information
 - [x] Clean all unused imports
+- [] Change to Android JetPack archicture

@@ -1,22 +1,24 @@
 package com.example.weatherapp.views
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
+
 import com.example.weatherapp.R
 import com.example.weatherapp.adapters.CityAdapter
-
 import com.example.weatherapp.models.City
 import com.example.weatherapp.models.Coordinate
 import com.example.weatherapp.models.Weather
+import com.google.gson.Gson
 
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.json.JSONObject
+import org.jetbrains.anko.defaultSharedPreferences
 
 import kotlinx.android.synthetic.main.activity_cities.*
 
@@ -24,26 +26,37 @@ import java.net.URL
 
 class CitiesActivity : AppCompatActivity() {
 
+    //User Location
     private var userLocation : Coordinate = Coordinate(0.0, 0.0)
+
+    //UI Components
     private lateinit var citiesRecycleView: RecyclerView
     private lateinit var progressBar : ProgressBar
 
+    //Shared Preferences
+    private lateinit var preferences: SharedPreferences
+
+    //Cities
     var citiesList : MutableList<City> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cities)
 
-        setSupportActionBar(toolbar)
+        //Setup Toolbar to enable back button
+        setSupportActionBar(toolbarCities)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        //Get Extra InformatioN
-        intent.extras.get(USER_LAT).let { value -> userLocation.lat = value as Double }
-        intent.extras.get(USER_LNG).let { value -> userLocation.lng = value as Double }
+        //Shared Preference
+        preferences = defaultSharedPreferences
+
+        //Getting UserLocation from SharedPreference
+        userLocation = getSharedPreferences()
 
         progressBar = findViewById(R.id.progressBarCities)
         citiesRecycleView = findViewById(R.id.recycleViewCities)
 
+        //Setup RecyclerView
         citiesRecycleView.apply {
             val layoutManager = LinearLayoutManager(this@CitiesActivity)
             citiesRecycleView.layoutManager = layoutManager
@@ -52,10 +65,8 @@ class CitiesActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-
         progressBar.visibility = View.VISIBLE
         searchCities()
-
     }
 
     private fun searchCities(){
@@ -79,7 +90,7 @@ class CitiesActivity : AppCompatActivity() {
                     getWeather.getJSONObject(0).getString("id"),
                     getWeather.getJSONObject(0).getString("main"),
                     getWeather.getJSONObject(0).getString("description"),
-                    "http://openweathermap.org/img/wn/${getWeather.getJSONObject(0).getString("icon")}@2x.png"
+                    "https://openweathermap.org/img/wn/${getWeather.getJSONObject(0).getString("icon")}@2x.png"
                 )
 
                 val city = City(
@@ -102,9 +113,16 @@ class CitiesActivity : AppCompatActivity() {
 
     }
 
+    private fun getSharedPreferences(): Coordinate {
+        val gson = Gson()
+        val preferencePosition = preferences.getString(PREFERENCES, "0")
+        val statusPosition = gson.fromJson(preferencePosition, Coordinate::class.java)
+
+        return statusPosition
+    }
+
     companion object {
-        val USER_LAT = "User_Latitude"
-        val USER_LNG = "User_Longitude"
+        val PREFERENCES = "User_Position"
     }
 
 }
