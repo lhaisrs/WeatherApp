@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 
@@ -21,7 +22,13 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.Gson
+import com.inlocomedia.android.core.permissions.PermissionResult
+import com.inlocomedia.android.core.permissions.PermissionsListener
+import com.inlocomedia.android.engagement.InLocoEngagement
+import com.inlocomedia.android.engagement.request.FirebasePushProvider
 
 import org.jetbrains.anko.defaultSharedPreferences
 
@@ -41,6 +48,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var userLocation : Coordinate
     private lateinit var posLocation : Coordinate
 
+    //Debug TAGS
+    private var DEBUG_INLOCO = "InLoco"
+    private var DEBUG_FIREBASE = "Firebase"
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
@@ -55,14 +67,55 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         //Initialize FusedLocationProvider
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
+        //InLoco Permissions
+        setupRequestPermission()
+
         //Check Location Permission
         checkUserLocationPermission()
 
-        val btnSearch = findViewById<Button>(R.id.searchBtn)
+        //Notification
+        setupTokenNotification()
+
+        val btnSearch : Button = findViewById(R.id.searchBtn)
         btnSearch.setOnClickListener {
             navigateSearchPage()
         }
 
+    }
+
+    private fun setupRequestPermission(){
+        val askIfDenied = true // Will prompt the user if he has previously denied the permission
+
+        InLocoEngagement.requestPermissions(this, REQUIRED_PERMISSION, askIfDenied, object : PermissionsListener {
+
+            override fun onPermissionRequestCompleted(permissionResult: HashMap<String, PermissionResult>) {
+                if (permissionResult[Manifest.permission.ACCESS_FINE_LOCATION]!!.isAuthorized()) {
+                    // Permission enabled
+                    Log.d(DEBUG_INLOCO, "Permissions enable")
+                }
+            }
+        })
+    }
+
+    private fun setupTokenNotification(){
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w(DEBUG_FIREBASE, "getInstanceId failed", task.exception)
+                    return@OnCompleteListener
+                }
+
+                // Get new Instance ID token
+                val firebaseToken = task.result?.token
+
+                if(firebaseToken != null && !firebaseToken.isEmpty()) {
+                    val pushProvider = FirebasePushProvider.Builder()
+                        .setFirebaseToken(firebaseToken)
+                        .build()
+
+                    InLocoEngagement.setPushProvider(this, pushProvider)
+                }
+            })
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -139,5 +192,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     companion object {
         val PREFERENCES = "User_Position"
+        private val REQUIRED_PERMISSION = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 }

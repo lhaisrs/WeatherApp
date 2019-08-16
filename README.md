@@ -31,6 +31,8 @@ Weather App using Kotlin to Android
 - Enable *City and Weather* as Serializable to passing in extras intent
 - Using SharedPreference as safety storage and by-pass variable
 - Put a toast to force user to always click on Map before go to CitiesActivity
+- Adding deep link in **MainActivity**
+- Merge with *sdk_inloco* branch to integrate with SDK InLoco 
 
 ###### Improvements:
 - [x] Create User Coordination class
